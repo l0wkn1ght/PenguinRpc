@@ -17,8 +17,13 @@ export function hmacSha256Hex(key: string, payload: string): string {
   return crypto.createHmac("sha256", key).update(payload).digest("hex");
 }
 
+// Valid hex character regex
+const HEX_REGEX = /^[0-9a-fA-F]+$/;
+
 export function safeEqual(a: string, b: string): boolean {
   if (a.length !== b.length) {return false;}
+  // Guard against invalid hex strings that produce empty buffers when decoded
+  if (!HEX_REGEX.test(a) || !HEX_REGEX.test(b)) {return false;}
   return crypto.timingSafeEqual(Buffer.from(a, "hex"), Buffer.from(b, "hex"));
 }
 
